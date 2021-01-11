@@ -23,6 +23,12 @@ class Design extends Model
     {
         return $this->belongsTo(Tag::class);
     }
+
+    public function scopeAccepted()
+    {
+        return $this->where('is_verified','=','accepted');
+    }
+
     public function designer()
     {
         return $this->belongsTo(User::class,'designer_id');

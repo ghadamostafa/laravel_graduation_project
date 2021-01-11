@@ -18,7 +18,7 @@ use Redirect;
 use DB;
 use App\Notifications\UserNotifications;
 
-class DesignController extends Controller
+class DesignsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,55 +27,55 @@ class DesignController extends Controller
      */
     public function index(Request $request)
     {
-        $desings=Design::where('is_verified','=','accepted')->paginate(9, ['*'], 'designs');
-        $maxPrice=Design::all()->max('price');
-        $minPrice=Design::all()->min('price');
+        $desings=Design::Accepted()->paginate(9, ['*'], 'pages');
+        $maxPrice=Design::max('price')+1;
+        $minPrice=Design::min('price')-1;
         $tags=Tag::all();
         $materials=Material::all();
-        $categoryFiltered=False;
-        $categoryType="";
-        return view('designs.index',compact('categoryType','categoryFiltered','materials','tags','desings','maxPrice','minPrice'));
-        //
-    }
-
-    public function designs(Request $request)
-    {
+        $categories=['women','men','kids','teenagers'];
+        if($request->ajax())
+        {
             $minPrice=$request->min;
-            $minarr=explode('$', $minPrice);
-            $min=(int)$minarr[1];
             $maxPrice=$request->max;
-            $maxarr=explode('$', $maxPrice);
-            $max=(int)$maxarr[1];
             $category=$request->category;
-            $filterType=$request->filterType;
+            $sortType=$request->sortType;
             $tag=$request->tag;
             $material=$request->material;
-            $filteredDesigns=Design::where('is_verified','=','accepted')->whereBetween('price',[$min,$max]);
+            return $this->designs_filtered($minPrice,$maxPrice,$category,$sortType,$tag,$material);
+        }
+        return view('designs.index',compact('categories','materials','tags','desings','maxPrice','minPrice'));
+    }
+
+    public function designs_filtered($minPrice,$maxPrice,$category,$sortType,$tag,$material)
+    {
+            $filteredDesigns=Design::Accepted()->whereBetween('price',[$minPrice,$maxPrice]);
             if($category)
             {
                 $filteredDesigns->where('category','=',$category);
             }
             if($tag)
             {
-                $filteredDesigns->whereHas('tag', function($query) use ($tag) {$query->where('name','=',$tag);});
+                $filteredDesigns->whereHas('tag', function($query) use ($tag) {
+                    $query->where('name','=',$tag);});
             }
             if($material)
             {
-               $filteredDesigns->whereHas('materials', function($query) use ($material) {$query->where('name','=',$material);});
+               $filteredDesigns->whereHas('materials', function($query) use ($material) {
+                   $query->where('name','=',$material);});
             }
-            if($filterType)
+            if($sortType)
             {
-                if($filterType == 'Top Rated')
+                if($sortType == 'Top Rated')
                 {
                     $filteredDesigns->orderBy('total_likes', 'desc');
                 }
-                 else if($filterType == 'Latest')
+                 else if($sortType == 'Latest')
                 {
                      $filteredDesigns->orderBy('created_at', 'desc');
                 }
             }
-            $desings=$filteredDesigns->paginate(9, ['*'], 'filtered');
-            return view('designs.listDesigns',compact('desings'));
+            $desings=$filteredDesigns->paginate(9, ['*'], 'filteredPages');
+            return view('designs.partials.designs',compact('desings'));
     }
 
     public function search(Request $request)
@@ -86,139 +86,139 @@ class DesignController extends Controller
         //
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function category($type = null)
-    {
-        // $desings=Design::paginate(9);
-        if($type != null)
-        {
-            $desings=Design::where('category','=',$type)->where('is_verified','=','accepted')->paginate(6, ['*'], 'filtered');
-            $maxPrice=Design::all()->max('price');
-            $minPrice=Design::all()->min('price');
-            $tags=Tag::all();
-            $materials=Material::all();
-            $categoryFiltered=True;
-            $categoryType=$type;
-            return view('designs.index',compact('categoryType','categoryFiltered','materials','tags','desings','maxPrice','minPrice'));
-        }
+    // /**
+    //  * Display a listing of the resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function category($type = null)
+    // {
+    //     // $desings=Design::paginate(9);
+    //     if($type != null)
+    //     {
+    //         $desings=Design::where('category','=',$type)->where('is_verified','=','accepted')->paginate(6, ['*'], 'filtered');
+    //         $maxPrice=Design::all()->max('price');
+    //         $minPrice=Design::all()->min('price');
+    //         $tags=Tag::all();
+    //         $materials=Material::all();
+    //         $categoryFiltered=True;
+    //         $categoryType=$type;
+    //         return view('designs.index',compact('categoryType','categoryFiltered','materials','tags','desings','maxPrice','minPrice'));
+    //     }
         
-        //
-    }
+    //     //
+    // }
 
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function vote(Request $request)
-    {
-        // echo $id;
-        $design=Design::find($request->design_id);
-        if($request->vote == "add")
-        {
-           DesignVote::create(['design_id'=>$design->id,
-            'user_id'=>Auth::id()]);
-            $design->total_likes =$design->total_likes +1;
-            $design->save(); 
-        }
-        else if($request->vote == "remove")
-        {
-            $vote=DesignVote::all()->where('design_id','=',$design->id)->first();
-            $vote->delete();
-            $design->total_likes =$design->total_likes -1;
-            $design->save(); 
-        }
+    // /**
+    //  * Update the specified resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function vote(Request $request)
+    // {
+    //     // echo $id;
+    //     $design=Design::find($request->design_id);
+    //     if($request->vote == "add")
+    //     {
+    //        DesignVote::create(['design_id'=>$design->id,
+    //         'user_id'=>Auth::id()]);
+    //         $design->total_likes =$design->total_likes +1;
+    //         $design->save(); 
+    //     }
+    //     else if($request->vote == "remove")
+    //     {
+    //         $vote=DesignVote::all()->where('design_id','=',$design->id)->first();
+    //         $vote->delete();
+    //         $design->total_likes =$design->total_likes -1;
+    //         $design->save(); 
+    //     }
         
-        echo $design->total_likes;
-    }
+    //     echo $design->total_likes;
+    // }
     
 
-    public function commentReply(Request $request,$id)
-    {
-        $body=$request->Reply_body;
-        $user_id=Auth::id();
-        $reply=CommentReply::create(['body' => $body,
-        'user_id'=>$user_id,
-        'comment_id' => $id
-        ]);
-        $user=Auth::user();
-        return response()->json([
-            'reply' => $reply,
-            'user' => $user
-        ]);
-    }
+    // public function commentReply(Request $request,$id)
+    // {
+    //     $body=$request->Reply_body;
+    //     $user_id=Auth::id();
+    //     $reply=CommentReply::create(['body' => $body,
+    //     'user_id'=>$user_id,
+    //     'comment_id' => $id
+    //     ]);
+    //     $user=Auth::user();
+    //     return response()->json([
+    //         'reply' => $reply,
+    //         'user' => $user
+    //     ]);
+    // }
     
-    public function comment(Request $request)
-    {
-        $design_id=$request->design_id;
-        $body=$request->comment_body;
-        $user_id=Auth::id();
-        $comment=DesignComment::create([
-            'user_id'=>$user_id,
-            'design_id'=>$request->design_id,
-            'body'=>$request->comment_body
-        ]);
-        $comment->{'user_image'}=$comment->user->image;
-        $comment->{'user_name'}=$comment->user->name;
-         return response()->json([
-            'comment' => $comment
-        ]);
-    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $this->authorize('create', Design::class);
-        $design = new Design();
-        $designMaterial=Material::all();
-        $tags=Tag::all();
-        return view('designs.create',compact('designMaterial','design','tags'));
+    // public function comment(Request $request)
+    // {
+    //     $design_id=$request->design_id;
+    //     $body=$request->comment_body;
+    //     $user_id=Auth::id();
+    //     $comment=DesignComment::create([
+    //         'user_id'=>$user_id,
+    //         'design_id'=>$request->design_id,
+    //         'body'=>$request->comment_body
+    //     ]);
+    //     $comment->{'user_image'}=$comment->user->image;
+    //     $comment->{'user_name'}=$comment->user->name;
+    //      return response()->json([
+    //         'comment' => $comment
+    //     ]);
+    // }
+    // /**
+    //  * Show the form for creating a new resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function create()
+    // {
+    //     $this->authorize('create', Design::class);
+    //     $design = new Design();
+    //     $designMaterial=Material::all();
+    //     $tags=Tag::all();
+    //     return view('designs.create',compact('designMaterial','design','tags'));
         
-    }
+    // }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreDesignsRequest $request)
-    {
-        $validated = $request->validated();
-        if($request->hasFile('images') && $request->hasFile('sourceFile') )
-        {
-            $file=$request->file('sourceFile');
-            $filePath = $file->store('Files','public');
-            $design= Design::create(['title'=> $request->title,
-                        'description'=>$request->description,
-                        'price'=>$request->price,
-                        'category'=>$request->category,
-                        'designer_id'=>Auth::id(),
-                        'source_file'=> $filePath,
-                        'tag_id'=>$request->tag_id
-            ]);
-            $design->materials()->attach($request->Material);
-            foreach ($request->images as $image) {
-                        $filename = $image->store('Designs','public');
-                        DesignImage::create([
-                        'design_id' => $design->id,
-                        'image' => $filename
-                    ]);
-            }
-            return redirect("design/".$design->id)->with('success','Design added successfuly,please wait while your design is verified .');
+    // /**
+    //  * Store a newly created resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function store(StoreDesignsRequest $request)
+    // {
+    //     $validated = $request->validated();
+    //     if($request->hasFile('images') && $request->hasFile('sourceFile') )
+    //     {
+    //         $file=$request->file('sourceFile');
+    //         $filePath = $file->store('Files','public');
+    //         $design= Design::create(['title'=> $request->title,
+    //                     'description'=>$request->description,
+    //                     'price'=>$request->price,
+    //                     'category'=>$request->category,
+    //                     'designer_id'=>Auth::id(),
+    //                     'source_file'=> $filePath,
+    //                     'tag_id'=>$request->tag_id
+    //         ]);
+    //         $design->materials()->attach($request->Material);
+    //         foreach ($request->images as $image) {
+    //                     $filename = $image->store('Designs','public');
+    //                     DesignImage::create([
+    //                     'design_id' => $design->id,
+    //                     'image' => $filename
+    //                 ]);
+    //         }
+    //         return redirect("design/".$design->id)->with('success','Design added successfuly,please wait while your design is verified .');
             
-        }
-    }
+    //     }
+    // }
 
 
     /**
@@ -247,89 +247,105 @@ class DesignController extends Controller
         return view('designs.show',compact('comments','voted','RelatedDesigns','design','designImages'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $design = Design::find($id);
-        $this->authorize('update', $design);
-        $designMaterial=Material::all();
-        $tags=Tag::all();
-        $designImages=DesignImage::all()->where('design_id','=',$id);
-        return view('designs.edit',compact('design','designMaterial','tags','designImages'));
-        //
-    }
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function edit($id)
+    // {
+    //     $design = Design::find($id);
+    //     $this->authorize('update', $design);
+    //     $designMaterial=Material::all();
+    //     $tags=Tag::all();
+    //     $designImages=DesignImage::all()->where('design_id','=',$id);
+    //     return view('designs.edit',compact('design','designMaterial','tags','designImages'));
+    //     //
+    // }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request,Design $design)
-    {
-        $this->authorize('update', $design);
-         $validatedData = $request->validate([
-            'title' => 'required',
-            'price' => 'required',
-            'description' => 'required',
-            'category' => 'required',
-            'sourceFile'  => 'sometimes|mimes:pdf|max:10000',
-            'images' => 'sometimes',
-            'images.*' => 'mimes:jpg,jpeg,png',
-            'tag_id' => 'required',
-            'Material' => 'required'
-        ]);
-        $design=Design::find($design->id);
-        $design->update($request->all());
-        $design->is_verified="pending";
-        if ( $request->hasFile('sourceFile') ) 
-        {
-            $file=$request->file('sourceFile');
-            $filePath = $file->store('Files','public');
-            $design ->source_file=$filePath ;   
-        }
-        $design->materials()->sync($request->Material);
-        // Images
-        if($request->hasFile('images'))
-        {
-            foreach ($design->images as $image) {
+    // /**
+    //  * Update the specified resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function update(Request $request,Design $design)
+    // {
+    //     $this->authorize('update', $design);
+    //      $validatedData = $request->validate([
+    //         'title' => 'required',
+    //         'price' => 'required',
+    //         'description' => 'required',
+    //         'category' => 'required',
+    //         'sourceFile'  => 'sometimes|mimes:pdf|max:10000',
+    //         'images' => 'sometimes',
+    //         'images.*' => 'mimes:jpg,jpeg,png',
+    //         'tag_id' => 'required',
+    //         'Material' => 'required'
+    //     ]);
+    //     $design=Design::find($design->id);
+    //     $design->update($request->all());
+    //     $design->is_verified="pending";
+    //     if ( $request->hasFile('sourceFile') ) 
+    //     {
+    //         $file=$request->file('sourceFile');
+    //         $filePath = $file->store('Files','public');
+    //         $design ->source_file=$filePath ;   
+    //     }
+    //     $design->materials()->sync($request->Material);
+    //     // Images
+    //     if($request->hasFile('images'))
+    //     {
+    //         foreach ($design->images as $image) {
 
-                        $image->delete();
-            }
+    //                     $image->delete();
+    //         }
 
-            foreach ($request->images as $image) {
-                 $filename = $image->store('Designs','public');
-                        DesignImage::create([
-                        'design_id' => $design->id,
-                        'image' => $filename
-                        ]);
+    //         foreach ($request->images as $image) {
+    //              $filename = $image->store('Designs','public');
+    //                     DesignImage::create([
+    //                     'design_id' => $design->id,
+    //                     'image' => $filename
+    //                     ]);
                         
-            }              
-        }
-        $design->save();
-        return redirect("design/".$design->id)->with('success','Design Upadated Successfuly');
-    }
+    //         }              
+    //     }
+    //     $design->save();
+    //     return redirect("design/".$design->id)->with('success','Design Upadated Successfuly');
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-        $design = Design::findOrFail($id);
-         $this->authorize('delete', $design);
-        $design->delete();
-        return redirect('designer/'.Auth::id())->with('success','Design deleted successfully ');
-    }
+    // /**
+    //  * Remove the specified resource from storage.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function destroy($id)
+    // {
+    //     //
+    //     $design = Design::findOrFail($id);
+    //      $this->authorize('delete', $design);
+    //     $design->delete();
+    //     return redirect('designer/'.Auth::id())->with('success','Design deleted successfully ');
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // public function filterBy(Request $request)
     // {

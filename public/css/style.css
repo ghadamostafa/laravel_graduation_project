@@ -17,14 +17,14 @@ body {
 	-webkit-font-smoothing: antialiased;
 	font-smoothing: antialiased;
 }
-	.filter+.ui-selectmenu-button{  
+	.sorting+.ui-selectmenu-button{  
    background: rgb(12,27,37);     
    color: white;
    width:130px !important;
    margin-right: 30px;
    float: right;
 }
-.filter+.ui-selectmenu-button:hover{  
+.sorting+.ui-selectmenu-button:hover{  
    background: rgb(12,27,37);     
    color: white;
 }
@@ -1357,8 +1357,8 @@ a:hover{
 	text-transform: uppercase;
 	margin-bottom: 45px;
 }
-#selectable .ui-selecting { }
-#selectable .ui-selected ,#tags .ui-selected,#materials .ui-selected{ background: #b9b8b8; color: white; }
+#categories .ui-selecting { }
+#categories .ui-selected ,#tags .ui-selected,#materials .ui-selected{ background: #b9b8b8; color: white; }
 .category-menu {
 	list-style: none;
 }

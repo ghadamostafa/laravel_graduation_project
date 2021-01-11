@@ -63,12 +63,12 @@ class DesignerController extends Controller
         $current_designs = Design::where('designer_id', $id)->get()->count();
         $likes_count =User::findOrFail($id)->likes;
         $designs = Design::where('designer_id',$id)->get();
-        $cimage_array=[];
-        foreach($designs as $design)
-        {
-            $design_image = DesignImage::where('design_id',$design->id)->get();
-        array_push($cimage_array, $design_image[0]); 
-        }
+        // $cimage_array=[];
+        // foreach($designs as $design)
+        // {
+        //     $design_image = DesignImage::where('design_id',$design->id)->get();
+        // array_push($cimage_array, $design_image[0]); 
+        // }
         $featured_designs = Design::where(['designer_id'=>$id,'featured'=>1])->get();
         $fimage_array=[];
         foreach($featured_designs as $design)
@@ -94,7 +94,7 @@ class DesignerController extends Controller
         //     $prev_images = null;
         // }   
 
-        return view('designer.profile',['designer'=>$designer,'user'=>$user,'vote_exist'=>$vote_exist,'design_count'=>$current_designs,'featured_images'=>$fimage_array,'current_images'=>$cimage_array,'likes'=>$likes_count,'about'=>$about,'prev_works'=>$prev_works,'prev_count'=>$prev_work_count,'designs'=>$designs]);       
+        return view('designer.profile',['designer'=>$designer,'user'=>$user,'vote_exist'=>$vote_exist,'design_count'=>$current_designs,'featured_images'=>$fimage_array,'designs'=>$designs,'likes'=>$likes_count,'about'=>$about,'prev_works'=>$prev_works,'prev_count'=>$prev_work_count,'designs'=>$designs]);       
     }    
     /**
      * Remove the specified resource from storage.

@@ -11,11 +11,11 @@
 					<!-- Categories -->
 					<div class="filter-widget">
 						<h2 class="fw-title">Categories</h2>
-						<ul class="category-menu" id = "selectable">
-							<li class=" {{ $categoryFiltered && $categoryType == 'women' ? 'ui-selected':''}} "><a href="#">women</a></li>
-							<li class=" {{ $categoryFiltered && $categoryType == 'men' ? 'ui-selected':''}} "><a href="#">men</a></li>
-							<li class=" {{ $categoryFiltered && $categoryType == 'kids' ? 'ui-selected':''}} "><a href="#">kids</a></li>
-							<li class=" {{ $categoryFiltered  && $categoryType == 'teenagers' ? 'ui-selected':''}} "><a href="#">teenagers</a></li>
+						<ul class="category-menu" id = "categories">
+							@foreach($categories as $category)
+								<li ><a href="#">{{ $category }}</a></li>
+						
+							@endforeach
 						</ul>
 					</div>
 					<!-- tags -->
@@ -65,24 +65,26 @@
 
 				<div class="col-lg-9  order-1 order-lg-2 mb-5 mb-lg-0">
 					<div class="row">
-						<div class="col-lg-12 mb-2 row">
-							
-							<div class="col-lg-6 filterTags">						  
+						@if($desings->total() >0 )
+							<div class="col-lg-12 mb-2 row">
 								
+								<div class="col-lg-6 filterTags">						  
+									
+								</div>
+								<div class="dropdown show col-lg-6">
+									<select class="btn sorting" role="menu" aria-labelledby="dropdownMenuLink">
+										<option selected disabled> Sort</option>
+										<option> <a class="dropdown-item " href="#" >Top Rated</a></option>
+										<option> <a class="dropdown-item " href="#" >Latest</a></option>
+									</select>
+								</div>
 							</div>
-							<div class="dropdown show col-lg-6">
-								 <select class="btn filter2 filter" role="menu" aria-labelledby="dropdownMenuLink">
-								 	<option selected disabled> Sort</option>
-								  	<option> <a class="dropdown-item " href="#" >Top Rated</a></option>
-								  	<option> <a class="dropdown-item " href="#" >Latest</a></option>
-								 </select>
-							</div>
-						</div>
-<!-- filter end -->
-					
-					@include('designs.listDesigns')
-				</div>
+						@endif
+<!-- filter end -->					
+						@include('designs.partials.designs')
+					</div>
 				
+				</div>
 			</div>
 		</div>
 	</section>

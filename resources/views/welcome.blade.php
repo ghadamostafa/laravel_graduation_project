@@ -122,7 +122,7 @@
                             @if($design->state != "sketch")
                             <div class="tag-sale">Sold</div>
                             @endif
-                            <a href="{{route('design.show', ['design' => $design->id])}}"> 
+                            <a href="{{route('designs.show', ['design' => $design->id])}}"> 
                                 <img width="200px" height="350px" style="border-radius: 5%" src="{{asset ('storage/'.$design->images()->first()->image) }}" alt="">
                             </a>
                             <div class="pi-links"> 
@@ -130,13 +130,13 @@
                                     <a href="javascript:void(0)" data-id="{{ $design->id }}" class="add-card"><i class="flaticon-bag"></i><span>ADD TO CART</span></a>
                                 @endif
                                 @if((Auth::user())&&(Auth::user()->role == "user") && ($design->state == "sketch") )
-                                    <a href="{{route('design.show', ['design' => $design->id])}}" class="wishlist-btn"><i class="flaticon-heart"></i></a>
+                                    <a href="{{route('designs.show', ['design' => $design->id])}}" class="wishlist-btn"><i class="flaticon-heart"></i></a>
                                 @endif
                             </div>
                         </div>
                         <div class="pi-text">
                             
-                            <a href="{{route('design.show', ['design' => $design->id])}}"> <p style="display: inline;">
+                            <a href="{{route('designs.show', ['design' => $design->id])}}"> <p style="display: inline;">
                                 {{ $design->title }}</p></a>
                             @if ($role == 'company')
                                 <span  class="price" style="float: right;">${{ $design->price }}</span> 
@@ -165,11 +165,11 @@
                                 @if($design->state != "sketch")
                                 <div class="tag-sale">Sold</div>
                                 @endif
-                                {{-- <a href="{{route('design.show', ['design' => $design->id])}}">
+                                {{-- <a href="{{route('designs.show', ['design' => $design->id])}}">
                                     <img src="{{ asset('images/product/9.jpg') }}" alt="">
                                 </a> --}}
                                 
-                                <a href="{{route('design.show', ['design' => $design->id])}}">
+                                <a href="{{route('designs.show', ['design' => $design->id])}}">
                                         <img width="338" height="241" style="border-radius: 5%" src="{{asset ('storage/'.$design->images()->first()->image) }}" alt="">
                                 </a>
                                
@@ -178,7 +178,7 @@
                                         <a href="javascript:void(0)" data-id="{{ $design->id }}" class="add-card"><i class="flaticon-bag"></i><span>ADD TO CART</span></a>
                                     @endif                                    
                                     @if((Auth::user())&&(Auth::user()->role == "user") && ($design->state == "sketch") )
-										<a href="{{route('design.show', ['design' => $design->id])}}" class="wishlist-btn"><i class="flaticon-heart"></i></a>
+										<a href="{{route('designs.show', ['design' => $design->id])}}" class="wishlist-btn"><i class="flaticon-heart"></i></a>
 									@endif                               
                                 </div>
                             </div>
@@ -186,7 +186,7 @@
                                 @if ($role == 'company')
                                     <span  class="price" style="float: right;">${{ $design->price }}</span>
                                 @endif
-                                <a href="{{route('design.show', ['design' => $design->id])}}"> <p>{{ $design->title}}</p></a>
+                                <a href="{{route('designs.show', ['design' => $design->id])}}"> <p>{{ $design->title}}</p></a>
                                 <div class="designer-name">
                                     <i style="font-style: italic;">By</i> 
                                     <a href="{{route('designer.show', ['designer' => $design->designer->id])}}" class="designer">{{$design->designer->name}}</a>

@@ -35,16 +35,15 @@ Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-// Route::get('/notifications', 'IndexController@notifications');
-Route::get('/notification/MarkAsRead', 'IndexController@MarkAsRead');
-Route::post('comment/{id}/commentReply', 'DesignController@commentReply');
-Route::get('/search', 'DesignController@search')->name('search');
-Route::get('design/category/{type?}', 'DesignController@category')->name('category');
-Route::post('design/comment', 'DesignController@comment');
-Route::post('/design/vote', 'DesignController@vote')->middleware('check-role:user');
-Route::get('/designs/{min?}/{max?}/{category?}/{tag?}/{material?}/{filterType?}/{filtered?}', 'DesignController@designs')->name('design.designs');
-// Route::post('design/filterBy', 'DesignController@filterBy');
-Route::resource('design', 'DesignController');
+//Designs
+// Route::get('/notification/MarkAsRead', 'IndexController@MarkAsRead');
+// Route::post('comment/{id}/commentReply', 'DesignsController@commentReply');
+Route::get('/search', 'DesignsController@search')->name('search');
+// Route::get('design/category/{type?}', 'DesignsController@category')->name('category');
+// Route::post('design/comment', 'DesignsController@comment');
+// Route::post('/design/vote', 'DesignsController@vote')->middleware('check-role:user');
+Route::get('/designs/{min?}/{max?}/{category?}/{tag?}/{material?}/{sortType?}/{filteredPages?}', 'DesignsController@index')->name('designs.index');
+Route::resource('designs', 'DesignsController',['except' => ['index']]);
 
 // socialite login routes
 Route::get('auth/social', 'Auth\LoginController@show')->name('social.login');

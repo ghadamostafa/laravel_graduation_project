@@ -7,7 +7,7 @@
 									@if($design->state != "sketch")
 									<div class="tag-sale">Sold</div>
 									@endif
-									<a href="{{route('design.show', ['design' => $design->id])}}"><img src="{{asset ('storage/'.$design->images()->first()->image) }} " alt="Design Image" id="designImage"></a>
+									<a href="{{route('designs.show', ['design' => $design->id])}}"><img src="{{asset ('storage/'.$design->images()->first()->image) }} " alt="Design Image" id="designImage"></a>
 									<div class="pi-links">
 
 										@if((Auth::user())&&(Auth::user()->role == "company") && ($design->state == "sketch") )
@@ -17,7 +17,7 @@
 										@endif
 
 										@if((Auth::user())&&(Auth::user()->role == "user") && ($design->state == "sketch") )
-										<a href="{{route('design.show', ['design' => $design->id])}}" class="wishlist-btn"><i class="flaticon-heart"></i></a>
+										<a href="{{route('designs.show', ['design' => $design->id])}}" class="wishlist-btn"><i class="flaticon-heart"></i></a>
 										@endif
 									</div>
 								</div>
@@ -26,7 +26,7 @@
 									@if((Auth::user())&&(Auth::user()->role != "user"))
 									<h6>&dollar;{{$design->price}}</h6>
 									@endif
-									<a href="{{route('design.show', ['design' => $design->id])}}"><h5>{{$design->title}}</h5></a>
+									<a href="{{route('designs.show', ['design' => $design->id])}}"><h5>{{$design->title}}</h5></a>
 									<div class="designer-name">
 									<i style="font-style: italic;">By</i> 
 									<a href="{{route('designer.show', ['designer' => $design->designer->id])}}" class="designer">{{$design->designer->name}}</a>
@@ -36,11 +36,11 @@
 							</div>
 						</div>
 						@empty
-							<div class="alert alert-danger">No Designs Yet!</div>
+							<div class="alert alert-danger " style="margin:auto;">No Designs Yet!</div>
 						@endforelse
-					</div>
+				</div>
 
-					<div class="row">
+				<div class="row">
 							 {!! $desings->links() !!}  
-					</div>	
+				</div>	
 			</div>
