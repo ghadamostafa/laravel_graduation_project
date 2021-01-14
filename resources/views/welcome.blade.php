@@ -27,7 +27,7 @@
                             @if (Auth::guest())
                                 <a href="{{ route('login')}}" class="site-btn sb-white">VOTE NOW</a>
                             @elseif($role == 'user')
-                                <a href="{{ route('design.index')}}" class="site-btn sb-white">VOTE NOW</a>
+                                <a href="{{ route('designs.index')}}" class="site-btn sb-white">VOTE NOW</a>
                             @endif
                         </div>
                     </div>
@@ -197,7 +197,7 @@
                 @endforeach
             </div>
             <div class="text-center pt-5">
-                <a href="{{ route('design.index')}}" class="site-btn sb-line sb-dark">SEE MORE</a>
+                <a href="{{ route('designs.index')}}" class="site-btn sb-line sb-dark">SEE MORE</a>
             </div>
         </div>
     </section>
@@ -238,7 +238,7 @@
                 <span>New DESIGNS</span>
                 <h2>EVERY DAY</h2>
                 @auth
-                    <a href="{{route('design.index')}}" class="site-btn">VOTE NOW</a>
+                    <a href="{{route('designs.index')}}" class="site-btn">VOTE NOW</a>
                 @else
                     <a href="{{ route('createAccount') }}" class="site-btn">Register NOW</a>
                 @endauth

@@ -60,7 +60,7 @@
 					<h4 class="p-stock">Address <span>{{$designer_data->address}}</span></h4>
 					@can('update',$designer_data)
                     @if($user->role == "designer")
-					<a href="{{ route('design.create',$designer_data) }}" class="btn site-btn"style="margin-top:15px;">ADD NEW DESIGN</a>
+					<a href="{{ route('designs.create',$designer_data) }}" class="btn site-btn"style="margin-top:15px;">ADD NEW DESIGN</a>
 					@endif
 					@endcan
 					<div id="accordion" class="accordion-area">
@@ -106,7 +106,7 @@
 				@foreach($featured_images as $fimage)
 					<div class="col-lg-3 col-sm-6"  id="design{{$fimage->design->id}}">
 						<div class="product-item" >
-							<a href="{{route('design.show', ['design'=>$fimage->design_id])}}"><img style="width:250px;height:300px;"class='featured_image'id =' {{$fimage->design->id}}' src="{{asset ('storage/'.$fimage->image) }}" alt=""></a>
+							<a href="{{route('designs.show', ['design'=>$fimage->design_id])}}"><img style="width:250px;height:300px;"class='featured_image'id =' {{$fimage->design->id}}' src="{{asset ('storage/'.$fimage->image) }}" alt=""></a>
 							@can('update',$designer_data)
 								@if($user->role == "designer"&& $fimage->design->featured )
 								<i class="fa fa-trash"id ="{{$fimage->design->id}}"></i>
@@ -133,7 +133,7 @@
 					@foreach($designs as $design)
 								<div class="product-item">
 								<div class="pi-pic current" id="{{$design->id}}" >
-									<a href="{{route('design.show', ['design' => $design->id])}}"><img class="current_designs" id="{{$design->id}}" style="width:250px;height:300px;"src="{{asset ('storage/'.$design->images()->first()->image) }}" alt=""></a>
+									<a href="{{route('designs.show', ['design' => $design->id])}}"><img class="current_designs" id="{{$design->id}}" style="width:250px;height:300px;"src="{{asset ('storage/'.$design->images()->first()->image) }}" alt=""></a>
 								</div>
 								</br>
 								@can('update',$designer_data)

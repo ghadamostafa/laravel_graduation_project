@@ -58,5 +58,10 @@ class Design extends Model
     {
         return $this->hasMany(DesignVote::class,'design_id');
     }
+
+    public function firstImage()
+    {
+        return $this->images->first()->image;
+    }
     
 }

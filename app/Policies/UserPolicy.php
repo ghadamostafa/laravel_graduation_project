@@ -76,6 +76,8 @@ class UserPolicy
                 : Response::deny('Unauthorized User');
     }
 
+    public function vote(User $user)
+    {}
     /**
      * Determine whether the user can delete the model.
      *

@@ -37,13 +37,15 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 //Designs
 // Route::get('/notification/MarkAsRead', 'IndexController@MarkAsRead');
-// Route::post('comment/{id}/commentReply', 'DesignsController@commentReply');
+
 Route::get('/search', 'DesignsController@search')->name('search');
 // Route::get('design/category/{type?}', 'DesignsController@category')->name('category');
-// Route::post('design/comment', 'DesignsController@comment');
-// Route::post('/design/vote', 'DesignsController@vote')->middleware('check-role:user');
-Route::get('/designs/{min?}/{max?}/{category?}/{tag?}/{material?}/{sortType?}/{filteredPages?}', 'DesignsController@index')->name('designs.index');
-Route::resource('designs', 'DesignsController',['except' => ['index']]);
+Route::post('/designs/vote', 'DesignsController@vote')->middleware('check-role:user');
+Route::resource('designs', 'DesignsController');
+
+//comments
+Route::post('designs/{design:id}/comments', 'CommentsController@store');
+Route::post('comments/{id}/commentReply', 'CommentsController@commentReply');
 
 // socialite login routes
 Route::get('auth/social', 'Auth\LoginController@show')->name('social.login');

@@ -19,7 +19,7 @@ class DesignPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return Response::allow() ;
     }
 
     /**
@@ -31,7 +31,9 @@ class DesignPolicy
      */
     public function view(User $user, Design $design)
     {
-        //
+        return ( ($design->is_verified == 'accepted' )|| $user->id == $design->designer_id)?
+         Response::allow()
+         :Response::deny('Unauthorized User');
     }
 
     /**
@@ -58,7 +60,7 @@ class DesignPolicy
     public function update(User $user, Design $design)
     {
         //
-         return $user->id === $design->designer_id ?
+         return ( ($user->id === $design->designer_id) && ($user->role == "designer") )?
                  Response::allow()
                 : Response::deny('Unauthorized User');
     }
@@ -90,11 +92,17 @@ class DesignPolicy
     public function delete(User $user, Design $design)
     {
         //
-        return $user->id === $design->designer_id ?
+        return ( ($user->id === $design->designer_id) && ($user->role == "designer") ) ?
                  Response::allow()
                 : Response::deny('Unauthorized User');
     }
 
+    public function buy(User $user)
+    {
+        return $user->role == "company" ?
+        Response::allow()
+        : Response::deny('Unauthorized User');
+    }
     /**
      * Determine whether the user can restore the model.
      *

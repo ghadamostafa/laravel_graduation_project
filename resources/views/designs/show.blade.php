@@ -14,12 +14,12 @@
 	<section class="product-section">
 		<div class="container">
 			<div class="back-link">
-				<a href="{{ route('design.index') }}"> &lt;&lt; Back to Designs</a>
+				<a href="{{ route('designs.index') }}"> &lt;&lt; Back to Designs</a>
 			</div>
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="product-pic-zoom">
-						<img class="product-big-img" src="{{asset ('storage/'.$design->images->first()->image) }}" alt="">
+						<img class="product-big-img" src="{{asset ('storage/'.$design->firstImage() ) }}" alt="">
 					</div>
 					<div class="product-thumbs" tabindex="1" style="overflow: hidden; outline: none;">
 						<div class="product-thumbs-track">
@@ -33,16 +33,20 @@
 				</div>
 				<div class="col-lg-6 product-details">
 					<h2 class="p-title ">{{$design->title}}</h2>
-					@if((Auth::user())&&(Auth::user()->role != "user"))
-					<h3 class="p-price" style="display: inline;">&dollar;{{$design->price}} </h3>
-					@endif
+					@auth
+						@if(Auth::user()->role != "user")
+						<h3 class="p-price" style="display: inline;">&dollar;{{$design->price}} </h3>
+						@endif
+
+						<!-- vote -->
+						@if ( (Auth::user()->role == "user") && ($design->state == "sketch") )
+						<a href="javascript:void(0)" class="wishlist-btn " style="font-size: 40px;margin-left: 10px;"><i class="fa fa-heart {{ $userVoted ? 'voted':'not-voted' }}"></i>
+						</a>
+						@endif
+					@endauth
 					<input type="hidden" name="designId" value="{{ $design->id }}" id="designId">
 
-					<!-- vote -->
-					@if((Auth::user()) &&(Auth::user()->role == "user") && ($design->state == "sketch") )
-					<a href="#" class="wishlist-btn " style="font-size: 40px;margin-left: 10px;"><i class="fa fa-heart {{($voted == 'True') ? 'show':'hide' }}"></i>
-					</a>
-					@endif
+					
 
 					<div class="pi-links">
 						<p>Designer : {{ $design->designer->name}}</p> 
@@ -58,7 +62,7 @@
 					</div>
 
 					@if($design->state == "sketch")
-					<h4 class="p-stock">Available: <span>{{$design->state}}</span></h4>
+						<h4 class="p-stock">Available: <span>{{$design->state}}</span></h4>
 					@else
 						<h4 class="p-stock"><span>Not Available</span></h4>
 					@endif
@@ -71,23 +75,23 @@
 						<a href="">3 reviews</a>|<a href="">Add your review</a>
 					</div> -->
 
-					
-					@if(Auth::check() && $design->state == "sketch" )
-						@if((Auth::id() == $design->designer_id) && Auth::user()->role == "designer")
-						<!-- delete design -->
-						<form action="{{route('design.destroy',$design->id)}}" method="POST" style="display: inline;">
-	                            @method('DELETE')
-	                            @csrf
-	                        <button class="deleteDesign btn-danger" onclick="return confirm('Are you sure?')"  type="submit">Delete</button>
-	                    </form>
-	                    <!-- edit design -->
-	                    <a class=" editDesign " href="{{route('design.edit',$design->id)}}"  >Edit</a>
-	                    @elseif((Auth::user()->role == "company") )
-
-	                    <!-- buy design -->
-	                    	<a href="javascript:void(0)" data-id="{{ $design->id }}" class="add-card site-btn mb-2"  >ADD TO CART</a>		
-	                    @endif
-	                @endif
+					@auth
+						@if( $design->state == "sketch" )
+							@canany(['delete','update'],$design)
+								<!-- delete design -->
+								<form action="{{route('designs.destroy',$design->id)}}" method="POST" style="display: inline;">
+										@method('DELETE')
+										@csrf
+									<button class="deleteDesign btn-danger" onclick="return confirm('Are you sure?')"  type="submit">Delete</button>
+								</form>
+								<!-- edit design -->
+								<a class=" editDesign " href="{{route('designs.edit',$design->id)}}"  >Edit</a>
+							@elsecanany(['buy'],App\Models\Design::class)
+							<!-- buy design -->
+								<a href="javascript:void(0)" data-id="{{ $design->id }}" class="add-card site-btn mb-2"  >ADD TO CART</a>		
+							@endcanany
+						@endif
+					@endauth
 					<div id="accordion" class="accordion-area">
 						<div class="panel">
 							<div class="panel-header" id="headingOne">
@@ -107,7 +111,7 @@
 							</div>
 							<div id="collapse2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
 								
-									@include('designs.comments')
+									@include('designs.partials.comments')
 								
 
 							</div>
@@ -132,7 +136,7 @@
 				@if(count($RelatedDesigns) == 1)
 					<div class="product-item" style="text-align: center;">
 							<div class="pi-pic">
-								<a href="{{route('design.show', ['design' => $RelatedDesigns->first()->id])}}"><img style="height:300px;width:250px;"src="{{asset ('storage/'.$RelatedDesigns->first()->images->first()->image) }}" alt=""></a>
+								<a href="{{route('designs.show', ['design' => $RelatedDesigns->first()->id])}}"><img style="height:300px;width:250px;"src="{{asset ('storage/'.$RelatedDesigns->first()->firstImage() )}}" alt=""></a>
 							</div>
 							</br>
 					</div>
@@ -141,12 +145,14 @@
 						@foreach($RelatedDesigns as $design)
 						<div class="product-item">
 							<div class="pi-pic">
-								<a href="{{route('design.show', ['design' => $design->id])}}"><img id="designImage" src="{{asset ('storage/'.$design->images->first()->image) }}" alt=""></a>
+								<a href="{{route('designs.show', ['design' => $design->id])}}"><img id="designImage" src="{{asset ('storage/'.$design->firstImage()) }}" alt=""></a>
 							</div>
 							<div class="pi-text ">
-								@if((Auth::user())&&(Auth::user()->role != "user"))
-								<h6>&dollar;{{ $design->price }}</h6>
-								@endif
+								@auth
+									@if((Auth::user()->role != "user"))
+									<h6>&dollar;{{ $design->price }}</h6>
+									@endif
+								@endauth
 								<p>{{ $design->title }} </p>
 							</div>
 						</div>
@@ -163,14 +169,13 @@
 	<script src="{{ asset('js/vote.js') }}"></script>
 	
 	<script type="text/javascript">
-		formId='';
-		function CommentReply(id){
+		let formId='';
+		function displayReplyForm(id){
 			formId=id;
 			console.log('#'+id);
 			$('#'+id).toggleClass('displayForm');
-			return false;
 		}
-		function ReplyComment()
+		function commentReply()
 		{
 			let comment_id = $('#'+formId).children('form').children( 'input[name=commentId]')[0].value;
 			let Reply_body=$('#'+formId).children('form').children("div").children( 'input[type=text]')[0].value;
@@ -183,9 +188,8 @@
 				});
 				$.ajax({
 					type: 'POST',
-					url: 'http://localhost:8000/comment/'+comment_id+'/commentReply',
+					url: 'http://localhost:8000/comments/'+comment_id+'/commentReply',
 					data: {
-					    // 'comment_id':comment_id,
 					    'Reply_body':Reply_body
 					},
 					success: function (data) {

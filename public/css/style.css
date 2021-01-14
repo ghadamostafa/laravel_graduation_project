@@ -83,13 +83,16 @@ body {
         background-color: #0b96a0;
         color: white;
 
-    }
+	}
+.invalid{
+	border: 1px solid red !important;
+}
 
-.show{
+.voted{
 	color: #f51167;
 			
 }
-.hide{
+.not-voted{
 	color: gray;
 }
 h1,

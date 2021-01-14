@@ -1,18 +1,14 @@
 $('.wishlist-btn').click(function(e) {
-			e.preventDefault();
 			let design_id = $('#designId').val();
-			let IconClasses=e.target.className;
-			let heartClass=	IconClasses.split(" ");
-			let vote="";
-			if (heartClass.includes("hide"))
+			let vote_element_classes = e.target.className.split(" ");
+			let vote_action="";
+			if (vote_element_classes.includes("not-voted"))
 			{
-				vote="add";
+				vote_action="add";
 			}
-			else if (heartClass.includes("show")) {
-				vote="remove";
+			else if (vote_element_classes.includes("voted")) {
+				vote_action="remove";
 			}
-			 console.log(vote);
-			 console.log(heartClass);
 			  $.ajaxSetup({
 			        headers: {
 			          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -20,16 +16,16 @@ $('.wishlist-btn').click(function(e) {
 			      });
 				$.ajax({
 		        type: 'POST',
-		        url: 'http://localhost:8000/design/vote',
+		        url: 'http://localhost:8000/designs/vote',
 		        data: {
 		            'design_id':design_id,
-		            'vote':vote
+		            'vote_action':vote_action
 		        },
-		        success: function (data) {
-		        	console.log(data);
-		        	$( ".fa-heart" ).toggleClass( "show" );
-		        	$( ".fa-heart" ).toggleClass( "hide" );
-		        	$(".votes").html(`Total Votes : ${data}`);
+		        success: function (total_likes) {
+		        	console.log(total_likes);
+		        	$( ".fa-heart" ).toggleClass( "voted" );
+		        	$( ".fa-heart" ).toggleClass( "not-voted" );
+		        	$(".votes").html(`Total Votes : ${total_likes}`);
 
 		        },
 		        error: function (XMLHttpRequest) {
