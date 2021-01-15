@@ -12,6 +12,17 @@ class DesignPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(?User $user)
+    {
+        return Response::allow() ;
+    }
+
+    /**
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
@@ -95,5 +106,5 @@ class DesignPolicy
         Response::allow()
         : Response::deny('Unauthorized User');
     }
-
+   
 }
