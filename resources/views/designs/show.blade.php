@@ -86,7 +86,7 @@
 								</form>
 								<!-- edit design -->
 								<a class=" editDesign " href="{{route('designs.edit',$design->id)}}"  >Edit</a>
-							@elsecanany(['buy'],App\Models\Design::class)
+							@elsecanany(['buy'],$design)
 							<!-- buy design -->
 								<a href="javascript:void(0)" data-id="{{ $design->id }}" class="add-card site-btn mb-2"  >ADD TO CART</a>		
 							@endcanany
@@ -167,59 +167,6 @@
 @endsection
 @push('scripts')
 	<script src="{{ asset('js/vote.js') }}"></script>
-	
-	<script type="text/javascript">
-		let formId='';
-		function displayReplyForm(id){
-			formId=id;
-			console.log('#'+id);
-			$('#'+id).toggleClass('displayForm');
-		}
-		function commentReply()
-		{
-			let comment_id = $('#'+formId).children('form').children( 'input[name=commentId]')[0].value;
-			let Reply_body=$('#'+formId).children('form').children("div").children( 'input[type=text]')[0].value;
-			console.log(comment_id);
-			console.log(Reply_body);
-			   	$.ajaxSetup({
-					headers: {
-						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-					}
-				});
-				$.ajax({
-					type: 'POST',
-					url: 'http://localhost:8000/comments/'+comment_id+'/commentReply',
-					data: {
-					    'Reply_body':Reply_body
-					},
-					success: function (data) {
-						console.log(data);
-						let form=$('#'+formId).children('form')[0];
-						let reply=`<div class="media g-mb-30 media-comment mb-2 replies">
-				            <img class="d-flex g-width-50 g-height-50 rounded-circle g-mt-3 g-mr-15" src="/storage/${data.user.image}" alt="Image Description">
-				            <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
-				              <div class="g-mb-15">
-				                <h5 class="h5 g-color-gray-dark-v1 mb-0">${data.user.name}</h5>
-				                <span class="g-color-gray-dark-v4 g-font-size-12">${new Date(data.reply.created_at).toISOString().replace(/T/, ' ').replace(/\..+/, '')}</span>
-				              </div>
-				              <p>${data.reply.body}</p>
-				            </div>
-				        </div>`;
-						$(reply).insertBefore($(form));
-						$('#'+formId).children('form').children("div").children( 'input[type=text]')[0].value="";
-						let replies= $('#Commentreplies'+comment_id).html();
-						let count=replies.split("")[0];
-						console.log(replies);
-						$('#Commentreplies'+comment_id).html(parseInt(count)+1+" replies");
-
-					},
-					error: function (XMLHttpRequest) {
-		        }
-			});
-
-		}
-					
-		
-	</script>
+	<script src="{{ asset('js/comment_reply.js') }}"></script>	
 	<script src="{{ asset('js/comments.js') }}"></script>
 @endpush

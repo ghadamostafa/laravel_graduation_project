@@ -12,28 +12,19 @@ class DesignPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
-    public function viewAny(User $user)
-    {
-        return Response::allow() ;
-    }
-
-    /**
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
      * @param  \App\Design  $design
      * @return mixed
      */
-    public function view(User $user, Design $design)
+    public function view(?User $user, Design $design)
     {
         return ( ($design->is_verified == 'accepted' )|| $user->id == $design->designer_id)?
          Response::allow()
          :Response::deny('Unauthorized User');
+        // return Response::allow() ;
+
     }
 
     /**
@@ -97,33 +88,12 @@ class DesignPolicy
                 : Response::deny('Unauthorized User');
     }
 
-    public function buy(User $user)
+    public function buy(User $user, Design $design)
     {
+        // dd($user->role);
         return $user->role == "company" ?
         Response::allow()
         : Response::deny('Unauthorized User');
     }
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Design  $design
-     * @return mixed
-     */
-    public function restore(User $user, Design $design)
-    {
-        //
-    }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Design  $design
-     * @return mixed
-     */
-    public function forceDelete(User $user, Design $design)
-    {
-        //
-    }
 }

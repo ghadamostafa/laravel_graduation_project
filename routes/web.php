@@ -39,9 +39,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 // Route::get('/notification/MarkAsRead', 'IndexController@MarkAsRead');
 
 Route::get('/search', 'DesignsController@search')->name('search');
-// Route::get('design/category/{type?}', 'DesignsController@category')->name('category');
 Route::post('/designs/vote', 'DesignsController@vote')->middleware('check-role:user');
 Route::resource('designs', 'DesignsController');
+// Route::get('design/category', 'DesignsController@category')->name('category');
 
 //comments
 Route::post('designs/{design:id}/comments', 'CommentsController@store');

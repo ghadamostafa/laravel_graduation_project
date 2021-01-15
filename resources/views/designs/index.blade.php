@@ -13,8 +13,7 @@
 						<h2 class="fw-title">Categories</h2>
 						<ul class="category-menu" id = "categories">
 							@foreach($categories as $category)
-								<li ><a href="#">{{ $category }}</a></li>
-						
+								<li ><a href="#" class="{{$selectedCategory == $category?'ui-selected':''}}">{{ $category }}</a></li>		
 							@endforeach
 						</ul>
 					</div>

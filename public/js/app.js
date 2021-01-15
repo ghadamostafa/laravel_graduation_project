@@ -43254,7 +43254,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var laravel_echo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! laravel-echo */ "./node_modules/laravel-echo/dist/echo.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 window.$ = window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 var notifications = [];
@@ -43262,14 +43261,14 @@ var NOTIFICATION_TYPES = {
   Payment: 'App\\Notifications\\designerNotifications',
   User: "App\\Notifications\\UserNotifications",
   CompanyUser: 'App\\Notifications\\CompanyUserNotifications'
-};
+}; //pusher
+
+window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  // key:'934f94342496700052a5',
-  // cluster: 'eu',
   key: "f6281f4e9f8d2a800dd2",
-  cluster: "eu",
+  cluster: 'eu',
   encrypted: false
 });
 
@@ -43342,8 +43341,8 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\wamp64\www\Graduation Project\laravel_graduation_project\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\wamp64\www\Graduation Project\laravel_graduation_project\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /media/user/A/Ghada/Job Preparation/Projects/Graduation Project/laravel_graduation_project/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /media/user/A/Ghada/Job Preparation/Projects/Graduation Project/laravel_graduation_project/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

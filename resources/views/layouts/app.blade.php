@@ -120,7 +120,7 @@
                                             @if( Auth::user()->role == "designer") 
                                                 @forelse (Auth::user()->unreadNotifications as $notification)
                                                     @if($notification->type === "App\\Notifications\\designerNotifications")
-                                                    <a class="dropdown-item notify" href="{{ route('design.show',['design'=>$notification->data['design']['id']]) }}">
+                                                    <a class="dropdown-item notify" href="{{ route('designs.show',['design'=>$notification->data['design']['id']]) }}">
                                                       {{$notification->data['company']}} has bought your {{ $notification->data['design']['title'] }} design
                                                     </a>
 
@@ -137,11 +137,11 @@
                                             @elseif(Auth::user()->role == "user")
                                                 @foreach (Auth::user()->unreadNotifications as $notification)
                                                     @if($notification->type === "App\\Notifications\\UserNotifications")
-                                                        <a class="dropdown-item" href="{{ route('design.show',['design'=>$notification->data['design']['id']]) }}">
+                                                        <a class="dropdown-item" href="{{ route('designs.show',['design'=>$notification->data['design']['id']]) }}">
                                                         {{$notification->data['designer']['name']}} has added a new design {{$notification['design']['title']}}
                                                         </a>
                                                     @elseif($notification->type === "App\\Notifications\\CompanyUserNotifications")
-                                                        <a class="dropdown-item" href="{{ route('design.show',['design'=>$notification->data['design']['id']]) }}">
+                                                        <a class="dropdown-item" href="{{ route('designs.show',['design'=>$notification->data['design']['id']]) }}">
                                                         {{$notification->data['company']}} has made your beloved design
                                                         </a>
                                                     @endif
@@ -230,10 +230,10 @@
                     <li><a href="{{route('company.index')}}">Companies</a></li>
                     <li><a href="#">Categories</a>
                         <ul class="sub-menu">
-                            <li><a href="/design/category/women">Women</a></li>
-                            <li><a href="/design/category/men">Men</a></li>
-                            <li><a href="/design/category/kids">Kids</a></li>
-                            <li><a href="/design/category/teenagers">Teenagers</a></li>
+                            <li><a href="/designs?category=women">Women</a></li>
+                            <li><a href="/designs?category=men">Men</a></li>
+                            <li><a href="/designs?category=kids">Kids</a></li>
+                            <li><a href="/designs?category=teenagers">Teenagers</a></li>
                         </ul>
                     </li>
                 <li><a href="/about">How it works</a></li>

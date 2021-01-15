@@ -25,6 +25,7 @@ class CommentsController extends Controller
         ]);
         $comment->{'user_image'}=$comment->user->image;
         $comment->{'user_name'}=$comment->user->name;
+        $comment->{'replies'}=$comment->replies;
          return response()->json([
             'comment' => $comment
         ]);

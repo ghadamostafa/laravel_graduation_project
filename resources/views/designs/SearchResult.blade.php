@@ -9,7 +9,7 @@
 							<div class="col-lg-4 col-sm-6">
 								<div class="product-item">
 									<div class="pi-pic">
-	                                   <a href="{{route('design.show', ['design' => $design->id])}}"><img src="{{asset ('storage/'.$design->images()->first()->image) }} " alt="Design Image" id="designImage"></a>
+	                                   <a href="{{route('designs.show', ['design' => $design->id])}}"><img src="{{asset ('storage/'.$design->firstImage() ) }} " alt="Design Image" id="designImage"></a>
 										
 									</div>
 									
@@ -17,7 +17,7 @@
 										@if((Auth::user())&&(Auth::user()->role != "user"))
 										<h6 style="font-family: monospace;">&dollar;{{$design->price}}</h6>
 										@endif
-										<a href="{{route('design.show',$design->id)}}" style="color: black;">{{$design->title}}</a>
+										<a href="{{route('designs.show',$design->id)}}" style="color: black;">{{$design->title}}</a>
 										<div class="designer-name">
 											<i style="font-style: italic;">By</i> 
 											<a href="{{route('designer.show', ['designer' => $design->designer->id])}}" class="designer">{{$design->designer->name}}</a>

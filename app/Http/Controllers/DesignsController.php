@@ -5,18 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Material;
 use App\Tag;
-use Auth;
 use App\Design;
 use App\DesignImage;
-use App\User;
-use App\DesignerRate;
 use App\DesignVote;
 use App\Http\Requests\StoreDesignsRequest;
-use App\DesignComment;
-use App\CommentReply;
-use Redirect;
-use DB;
-use App\Notifications\UserNotifications;
+use Illuminate\Support\Facades\Auth ;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class DesignsController extends Controller
@@ -40,14 +34,22 @@ class DesignsController extends Controller
         $minPrice=Design::min('price')-1;
         $tags=Tag::all();
         $materials=Material::all();
+        $selectedCategory=null;
         $categories=['women','men','kids','teenagers'];
-        if($request->ajax())
+        if($request->ajax() )
         {
-            return $this->filter_designs($request->min,$request->max,
+            return $this->filter_designs('ajax',$request->min,$request->max,
             $request->category, $request->sortType,
             $request->tag, $request->material);
         }
-        return view('designs.index',compact('categories','materials','tags','desings','maxPrice','minPrice'));
+        else if($request->category)
+        {
+            $selectedCategory=$request->category;
+            $desings= $this->filter_designs('http',$minPrice,$maxPrice,
+            $request->category, $request->sortType,
+            $request->tag, $request->material);
+        }
+        return view('designs.index',compact('selectedCategory','categories','materials','tags','desings','maxPrice','minPrice'));
     }
 
     /**
@@ -135,12 +137,9 @@ class DesignsController extends Controller
             $query->where('name','=',$tag);})->Accepted()
             ->where('id','!=',$design->id)->get();
         $comments=$design->comments;
-        $current_user_votes=$design->votes->where('user_id',Auth::user()->id);
+        $current_user_votes=$design->votes->where('user_id',Auth::id());
         ($current_user_votes->count() >0) ? $userVoted=True: $userVoted =FALSE;    
-        return view('designs.show',compact('comments',
-        'userVoted',
-        'RelatedDesigns',
-        'design',
+        return view('designs.show',compact('comments','userVoted','RelatedDesigns','design',
         'designImages'));
     }
 
@@ -182,7 +181,7 @@ class DesignsController extends Controller
 
     
 
-    public function filter_designs($minPrice,$maxPrice,$category,$sortType,$tag,$material)
+    public function filter_designs($requestType=null,$minPrice,$maxPrice,$category,$sortType,$tag,$material)
     {
             $filteredDesigns=Design::Accepted()->whereBetween('price',[$minPrice,$maxPrice]);
             if($category)
@@ -211,6 +210,10 @@ class DesignsController extends Controller
                 }
             }
             $desings=$filteredDesigns->paginate(9, ['*'], 'filteredPages');
+            if($requestType != 'ajax')
+            {
+                return $desings;
+            }
             return view('designs.partials.designs',compact('desings'));
     }
 
@@ -232,7 +235,10 @@ class DesignsController extends Controller
     public function search(Request $request)
     {
         $SearchWord=$request->word;
-        $designs=Design::whereHas('tag', function($query) use ($SearchWord) {$query->where(DB::raw('lower(name)'), "LIKE", strtolower($SearchWord)."%");})->where('is_verified','=','accepted')->orWhere(DB::raw('lower(category)'), "LIKE", strtolower($SearchWord)."%")->paginate(9);
+        $designs=Design::whereHas('tag', function($query) use ($SearchWord) {
+            $query->where(DB::raw('lower(name)'), "LIKE", strtolower($SearchWord)."%");})
+            ->Accepted()
+            ->orWhere(DB::raw('lower(category)'), "LIKE", strtolower($SearchWord)."%")->paginate(9);
         return view('designs.SearchResult',compact('designs'));
         //
     }
